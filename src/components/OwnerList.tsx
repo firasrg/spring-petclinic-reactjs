@@ -9,18 +9,15 @@ import {
   Paper,
   TablePagination,
 } from '@material-ui/core';
-import PetService from '../service/PetClinicService';
+import { findAllOwners } from '../service/PetClinicService';
 
 const Owners = () => {
   const [owners, setOwners] = useState([
     { id: '', firstName: '', lastName: '', address: '', city: '', phone: '' },
   ]);
 
-  const petService = new PetService();
-
   useEffect(() => {
-    petService
-      .findAllOwners()
+    findAllOwners()
       .then((data) => {
         setOwners(data);
       })

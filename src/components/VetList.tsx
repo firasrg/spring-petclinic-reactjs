@@ -7,20 +7,15 @@ import {
   TableHead,
   TableRow,
   Paper,
-  TablePagination,
+  TablePagination
 } from '@material-ui/core';
-import PetService from '../service/PetClinicService';
+import { findAllVets } from '../service/PetClinicService';
 
 const VetList = () => {
-  const [vetList, setVetList] = useState([
-    { id: '', firstName: '', lastName: '', specialties: [] },
-  ]);
-
-  const petService = new PetService();
+  const [vetList, setVetList] = useState([{ id: '', firstName: '', lastName: '', specialties: [] }]);
 
   useEffect(() => {
-    petService
-      .findAllVets()
+    findAllVets()
       .then((data) => {
         setVetList(data);
       })
@@ -52,16 +47,16 @@ const VetList = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {vetList
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((vet) => (
-                <TableRow key={vet.id}>
-                  <TableCell>
-                    {vet.firstName} {vet.lastName}
-                  </TableCell>
-                  <TableCell>{vet.specialties.length > 0 ? vet.specialties.map(specialty => specialty.name).join(', ') : 'none'}</TableCell>
-                </TableRow>
-              ))}
+            {vetList.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((vet) => (
+              <TableRow key={vet.id}>
+                <TableCell>
+                  {vet.firstName} {vet.lastName}
+                </TableCell>
+                <TableCell>
+                  {vet.specialties.length > 0 ? vet.specialties.map((specialty) => specialty.name).join(', ') : 'none'}
+                </TableCell>
+              </TableRow>
+            ))}
           </TableBody>
         </Table>
       </TableContainer>

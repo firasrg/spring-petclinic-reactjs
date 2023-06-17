@@ -1,44 +1,40 @@
 import axios from 'axios';
 
-class PetService {
-  private url: string = 'http://localhost:9966/petclinic/api';
+  const URL:string = 'http://localhost:9966/petclinic/api';
 
-  findAllPets = (): Promise<any> => {
-    return axios.get(this.url + '/pets')
+  export function findAllPets(): Promise<any> {
+    return axios.get(URL + '/pets')
       .then((response) => response.data)
       .catch((error) => {
         console.error(error);
       });
   };
 
-  findAllVets = (): Promise<any> => {
-    return axios.get(this.url + '/vets')
-      .then((response) => {console.log(response.data); return response.data})
+  export function findAllVets(): Promise<any> {
+    return axios.get(URL + '/vets')
+      .then((response) =>  response.data)
       .catch((error) => {
         console.error(error);
       });
   };
 
-  findAllOwners = (): Promise<any> => {
-    return axios.get(this.url + '/owners')
+  export function findAllOwners(): Promise<any> {
+    return axios.get(URL + '/owners')
       .then((response) => response.data)
       .catch((error) => {
         console.error(error);
       });
   };
 
-  addOwner = (requestBody: FormData): Promise<any> => {
-    return axios.post(this.url + '/owners', requestBody);
+  export function addOwner(requestBody: FormData): Promise<any> {
+    return axios.post(URL + '/owners', requestBody);
   };
 
 
-  findAllPetTypes = (): Promise<any> => {
-    return fetch(this.url + '/pettypes')
+  export function findAllPetTypes(): Promise<any> {
+    return fetch(URL + '/pettypes')
       .then((response) => response.json())
       .catch((error) => {
         console.error(error);
       });
   };
-}
-
-export default PetService;

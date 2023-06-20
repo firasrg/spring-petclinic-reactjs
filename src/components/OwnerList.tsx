@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { SetStateAction, useEffect, useState } from 'react';
 import {
   Table,
   TableBody,
@@ -8,28 +8,36 @@ import {
   TableRow,
   Paper,
   TablePagination,
-} from '@material-ui/core';
+} from '@mui/material';
 import { findAllOwners } from '../service/PetClinicService';
 
-const Owners = () => {
-  const [owners, setOwners] = useState([
-    { id: '', firstName: '', lastName: '', address: '', city: '', phone: '' },
-  ]);
+interface Owner {
+  id: string,
+  firstName: string,
+  lastName: string,
+  address: string,
+  city: string,
+  telephone: string
+}
+
+export const OwnerList = () => {
+  const [ownerList, setOwnerList] = useState<Owner[]>([{ id: '', firstName: '', lastName: '', address: '', city: '', telephone: '' },]);
+  const [page, setPage] = useState<number>(0);
+  const [rowsPerPage, setRowsPerPage] = useState<number>(8);
 
   useEffect(() => {
     findAllOwners()
       .then((data) => {
-        setOwners(data);
+        setOwnerList(data);
       })
       .catch((error) => {
         console.error(error);
       });
   }, []);
 
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(8);
+  
 
-  const handleChangePage = (newPage) => {
+  const handleChangePage = (newPage: SetStateAction<number>) => {
     setPage(newPage);
   };
 
@@ -51,12 +59,12 @@ const Owners = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {owners
+            {ownerList
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((owner) => (
                 <TableRow key={owner.id}>
                   <TableCell>
-                    {owner.firstName} {owner.lastName}
+                    {owner.firstName + " " +owner.lastName}
                   </TableCell>
                   <TableCell>{owner.address}</TableCell>
                   <TableCell>{owner.city}</TableCell>
@@ -69,7 +77,7 @@ const Owners = () => {
       <TablePagination
         rowsPerPageOptions={[10, 20]}
         component="div"
-        count={owners.length}
+        count={ownerList.length}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}
@@ -78,5 +86,3 @@ const Owners = () => {
     </div>
   );
 };
-
-export default Owners;

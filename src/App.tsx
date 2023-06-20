@@ -1,10 +1,9 @@
-import { Menu } from './navigation';
 import { useLocation } from 'react-router-dom';
 import ErrorPage from './Error';
-import VetList from './components/VetList';
+import { Menu } from './navigation';
+import { VetList, OwnerList } from './components';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Root from './Root';
-import OwnerList from './components/OwnerList';
 
 export default function App() {
   // TODO: add ErrorPage to Routes

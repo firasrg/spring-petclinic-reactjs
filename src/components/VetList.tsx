@@ -8,11 +8,23 @@ import {
   TableRow,
   Paper,
   TablePagination
-} from '@material-ui/core';
+} from '@mui/material';
 import { findAllVets } from '../service/PetClinicService';
 
-const VetList = () => {
-  const [vetList, setVetList] = useState([{ id: '', firstName: '', lastName: '', specialties: [] }]);
+interface Vet {
+  id: string;
+  firstName: string;
+  lastName: string;
+  specialties: Specialty[];
+}
+
+interface Specialty {
+  name: string
+}
+
+
+export const VetList = () => {
+  const [vetList, setVetList] = useState<Vet[]>([{ id: '', firstName: '', lastName: '', specialties: [] }]);
 
   useEffect(() => {
     findAllVets()
@@ -36,6 +48,12 @@ const VetList = () => {
     setPage(0);
   };
 
+  const computeSpecialties = (vet: Vet):string => {
+    if (vet.specialties.length > 0) {
+      return vet.specialties.map((specialty) => specialty.name).join(', ');
+    } else return 'none';
+  }
+
   return (
     <div>
       <TableContainer component={Paper}>
@@ -50,10 +68,10 @@ const VetList = () => {
             {vetList.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((vet) => (
               <TableRow key={vet.id}>
                 <TableCell>
-                  {vet.firstName} {vet.lastName}
+                  {vet.firstName + " " +vet.lastName}
                 </TableCell>
                 <TableCell>
-                  {vet.specialties.length > 0 ? vet.specialties.map((specialty) => specialty.name).join(', ') : 'none'}
+                  {computeSpecialties(vet)}
                 </TableCell>
               </TableRow>
             ))}
@@ -72,5 +90,3 @@ const VetList = () => {
     </div>
   );
 };
-
-export default VetList;

@@ -1,4 +1,4 @@
-export default function Root() {
+export const Home = () => {
   return (
     <>
       <div className="container-fluid">

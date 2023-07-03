@@ -37,9 +37,9 @@ export const VetList = () => {
   }, []);
 
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(8);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
-  const handleChangePage = (newPage) => {
+  const handleChangePage = (newPage: number) => {
     setPage(newPage);
   };
 

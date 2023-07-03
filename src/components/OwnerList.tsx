@@ -1,4 +1,4 @@
-import { SetStateAction, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Table,
   TableBody,
@@ -23,7 +23,7 @@ interface Owner {
 export const OwnerList = () => {
   const [ownerList, setOwnerList] = useState<Owner[]>([{ id: '', firstName: '', lastName: '', address: '', city: '', telephone: '' },]);
   const [page, setPage] = useState<number>(0);
-  const [rowsPerPage, setRowsPerPage] = useState<number>(8);
+  const [rowsPerPage, setRowsPerPage] = useState<number>(10);
 
   useEffect(() => {
     findAllOwners()
@@ -37,7 +37,7 @@ export const OwnerList = () => {
 
   
 
-  const handleChangePage = (newPage: SetStateAction<number>) => {
+  const handleChangePage = (newPage: number) => {
     setPage(newPage);
   };
 

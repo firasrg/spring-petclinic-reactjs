@@ -24,6 +24,7 @@ interface Specialty {
 
 
 export const VetList = () => {
+  const DEFAULT_NUMBER_ROWS_PER_PAGE:number = 5;
   const [vetList, setVetList] = useState<Vet[]>([{ id: '', firstName: '', lastName: '', specialties: [] }]);
 
   useEffect(() => {
@@ -37,14 +38,14 @@ export const VetList = () => {
   }, []);
 
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_NUMBER_ROWS_PER_PAGE);
 
   const handleChangePage = (newPage: number) => {
     setPage(newPage);
   };
 
   const handleChangeRowsPerPage = (event: React.ChangeEvent<any>) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
+    setRowsPerPage(parseInt(event.target.value));
     setPage(0);
   };
 
@@ -79,7 +80,7 @@ export const VetList = () => {
         </Table>
       </TableContainer>
       <TablePagination
-        rowsPerPageOptions={[10, 20]}
+        rowsPerPageOptions={[5, 10, 20]}
         component="div"
         count={vetList.length}
         rowsPerPage={rowsPerPage}

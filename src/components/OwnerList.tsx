@@ -21,9 +21,10 @@ interface Owner {
 }
 
 export const OwnerList = () => {
+  const DEFAULT_NUMBER_ROWS_PER_PAGE:number = 5;
   const [ownerList, setOwnerList] = useState<Owner[]>([{ id: '', firstName: '', lastName: '', address: '', city: '', telephone: '' },]);
   const [page, setPage] = useState<number>(0);
-  const [rowsPerPage, setRowsPerPage] = useState<number>(10);
+  const [rowsPerPage, setRowsPerPage] = useState<number>(DEFAULT_NUMBER_ROWS_PER_PAGE);
 
   useEffect(() => {
     findAllOwners()
@@ -42,7 +43,7 @@ export const OwnerList = () => {
   };
 
   const handleChangeRowsPerPage = (event: React.ChangeEvent<any>) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
+    setRowsPerPage(parseInt(event.target.value));
     setPage(0);
   };
 
@@ -75,7 +76,7 @@ export const OwnerList = () => {
         </Table>
       </TableContainer>
       <TablePagination
-        rowsPerPageOptions={[10, 20]}
+        rowsPerPageOptions={[5, 10, 20]}
         component="div"
         count={ownerList.length}
         rowsPerPage={rowsPerPage}

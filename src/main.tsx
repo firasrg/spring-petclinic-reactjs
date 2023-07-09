@@ -9,7 +9,7 @@ const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<App />} errorElement={<ErrorPage />}>
       <Route path="" element={<Home />} />
-      <Route path="/owners/list" element={<OwnerList />} />
+      <Route path="/owners/" element={<OwnerList />} />
       <Route path="/vets" element={<VetList />} />
       <Route errorElement={<ErrorPage />} />
     </Route>

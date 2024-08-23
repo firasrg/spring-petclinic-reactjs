@@ -1,16 +1,17 @@
-import { combineDataProviders, DataProvider, fetchUtils } from "react-admin";
-import HTTPMethod from "http-method-enum";
-import { stringify } from "query-string";
-import { OWNERS } from "@constants/resources";
+import { fetchUtils, UpdateResult } from "react-admin";
+import { GetOwnersListParams } from "@models/api/GetOwnersListParams";
 import { LAST_NAME } from "@constants/searchParams";
-import { GetListParams } from "@models/api/GetListParams";
+import { stringify } from "query-string";
+import HTTPMethod from "http-method-enum";
+import { OwnersDataProvider } from "@models/api/OwnersDataProvider";
+import { PETS } from "@constants/resources";
 
 const apiUrl = import.meta.env.VITE_SPRING_PETCLINIC_REST_API_URL;
 
 const httpClient = fetchUtils.fetchJson;
 
-const ownersDataProvider: DataProvider = {
-  getList: async (resource, { filter, signal }: GetListParams) => {
+export default {
+  getList: async (resource, { filter, signal }: GetOwnersListParams) => {
     const url = new URL(`${apiUrl}/${resource}`);
 
     const searchParams = new URLSearchParams();
@@ -67,15 +68,14 @@ const ownersDataProvider: DataProvider = {
     });
     return { data: json };
   },
-
   update: async (resource, params) => {
     const url = `${apiUrl}/${resource}/${params.id}`;
-    const { json } = await httpClient(url, {
+    await httpClient(url, {
       method: HTTPMethod.PUT,
       body: JSON.stringify(params.data)
     });
 
-    return { data: json };
+    return Promise.resolve<UpdateResult>({ data: { id: params.id } });
   },
 
   updateMany: async (resource, params) => {
@@ -107,16 +107,28 @@ const ownersDataProvider: DataProvider = {
       method: HTTPMethod.DELETE
     });
     return { data: json };
-  }
-};
+  },
+  createPet: async (resource: string, { meta: { ownerId }, data }) => {
+    const { json } = await httpClient(`${apiUrl}/${resource}/${ownerId}/${PETS}`, {
+      method: HTTPMethod.POST,
+      body: JSON.stringify(data)
+    });
+    return { data: json };
+  },
+  getPet: async (resource: string, { id, meta: { petId } }) => {
+    const { json } = await httpClient(`${apiUrl}/${resource}/${id}/${PETS}/${petId}`, {
+      method: HTTPMethod.GET
+    });
 
-const dataProviders = combineDataProviders((resource) => {
-  switch (resource) {
-    case OWNERS:
-      return ownersDataProvider;
-    default:
-      throw new Error(`Unknown resource: ${resource}`);
-  }
-});
+    return { data: json };
+  },
+  // TODO: create endpoint handler to edit pet owner
+  editPet: async (resource: string, { meta: { ownerId }, data: { petId, ...body } }) => {
+    const { json } = await httpClient(`${apiUrl}/${resource}/${ownerId}/${PETS}/${petId}`, {
+      method: HTTPMethod.PUT,
+      body: JSON.stringify(body)
+    });
 
-export default dataProviders;
+    return { data: json };
+  }
+} as OwnersDataProvider;

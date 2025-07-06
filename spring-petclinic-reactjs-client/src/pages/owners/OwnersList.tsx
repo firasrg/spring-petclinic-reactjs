@@ -1,13 +1,19 @@
-import { useGetList } from "react-admin";
-import { IApiOwner } from "@models/api/IApiOwner";
-import { OWNERS } from "@constants/resources";
-import { Link, useSearchParams } from "react-router-dom";
+import { useSearchParams, Link } from "react-router-dom";
 import { LAST_NAME } from "@constants/searchParams";
+import { useOwners } from "@hooks/useOwners";
+import { Loading } from "@components/Loading";
+import { ErrorMessage } from "@components/ErrorMessage";
 
 export default function OwnersList() {
   const [searchParams] = useSearchParams();
+  const lastName = searchParams.get(LAST_NAME) || undefined;
 
-  const { data } = useGetList<IApiOwner>(OWNERS, { filter: { [LAST_NAME]: searchParams.get(LAST_NAME) } });
+  const { data, isLoading, error, refetch } = useOwners({ lastName });
+
+  if (isLoading) return <Loading />;
+  if (error) return <ErrorMessage error={error.message} onRetry={() => refetch()} />;
+
+  const owners = data?.data || [];
 
   return (
     <div className="container xd-container">
@@ -30,7 +36,7 @@ export default function OwnersList() {
           </tr>
         </thead>
         <tbody>
-          {data?.map((owner) => (
+          {owners.map((owner) => (
             <tr key={owner.id}>
               <td>
                 <Link to={`/owners/${owner.id}`}>

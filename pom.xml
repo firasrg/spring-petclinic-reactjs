@@ -10,6 +10,7 @@
   <packaging>pom</packaging>
 
   <modules>
+    <!-- spring-petclinic-rest is a git submodule; its version is fixed via git, not Maven -->
     <module>spring-petclinic-rest</module>
     <module>spring-petclinic-reactjs-client</module>
   </modules>

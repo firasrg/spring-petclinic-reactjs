@@ -1,19 +1,20 @@
 import { Link, Navigate, useParams } from "react-router-dom";
 import { OWNERS_FIND } from "@constants/routes";
-import { useGetOne } from "react-admin";
-import { OWNERS } from "@constants/resources";
-import { IApiOwner } from "@models/api/IApiOwner";
+import { useOwner } from "@hooks/useOwners";
+import { Loading } from "@components/Loading";
+import { ErrorMessage } from "@components/ErrorMessage";
 import { formatPersonFullName } from "../../utils";
 
 export default function OwnerDetails() {
   const { id } = useParams();
-
   const ownerId = id ? Number(id) : undefined;
-  const { data: owner } = useGetOne<IApiOwner>(OWNERS, { id: ownerId });
 
-  if (!owner) {
-    return <Navigate to={OWNERS_FIND} />;
-  }
+  const { data: owner, isLoading, error, refetch } = useOwner(ownerId);
+
+  if (isLoading) return <Loading />;
+  if (error) return <ErrorMessage error={error.message} onRetry={() => refetch()} />;
+  if (!owner) return <Navigate to={OWNERS_FIND} />;
+
   return (
     <div>
       <div className="container xd-container">

@@ -1,5 +1,4 @@
-import { Admin as ReactAdminRoot, CustomRoutes } from "react-admin";
-import { BrowserRouter, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import {
   OWNERS,
   OWNERS_ADD_NEW,
@@ -9,7 +8,8 @@ import {
   VETERINARIANS,
   EDIT_OWNER,
   PET_EDIT_FORM,
-  PET_VISITS
+  PET_VISITS,
+  DASHBOARD
 } from "@constants/routes";
 import Dashboard from "@pages/Dashboard";
 import OwnersPage from "@pages/owners";
@@ -20,26 +20,27 @@ import PetForm from "@pages/forms/PetForm";
 import VisitsPage from "@pages/owners/Visits";
 import VeterinariansPage from "@pages/Veterinarians";
 import ErrorPage from "@pages/Error";
-import dataProvider from "./data-providers";
 import { Layout } from "./Layout";
+import { QueryProvider } from "./providers/QueryProvider";
 
 export const App = () => (
-  <BrowserRouter>
-    <ReactAdminRoot dashboard={Dashboard} layout={Layout} error={ErrorPage} dataProvider={dataProvider}>
-      <CustomRoutes>
-        <Route path={OWNERS} element={<OwnersPage />} />
-        <Route path={OWNERS_FIND} element={<OwnersList />} />
-        <Route path={GET_OWNER} element={<OwnerDetails />} />
-        <Route path={OWNERS_ADD_NEW} element={<OwnerForm />} />
-        <Route path={EDIT_OWNER} element={<OwnerForm />} />
-
-        <Route path={PET_NEW_FORM} element={<PetForm />} />
-        <Route path={PET_EDIT_FORM} element={<PetForm />} />
-        <Route path={PET_VISITS} element={<VisitsPage />} />
-
-        <Route path={VETERINARIANS} element={<VeterinariansPage />} />
-        <Route path="*" element={<ErrorPage />} />
-      </CustomRoutes>
-    </ReactAdminRoot>
-  </BrowserRouter>
+  <QueryProvider>
+    <BrowserRouter>
+      <Layout>
+        <Routes>
+          <Route path={DASHBOARD} element={<Dashboard />} />
+          <Route path={OWNERS} element={<OwnersPage />} />
+          <Route path={OWNERS_FIND} element={<OwnersList />} />
+          <Route path={GET_OWNER} element={<OwnerDetails />} />
+          <Route path={OWNERS_ADD_NEW} element={<OwnerForm />} />
+          <Route path={EDIT_OWNER} element={<OwnerForm />} />
+          <Route path={PET_NEW_FORM} element={<PetForm />} />
+          <Route path={PET_EDIT_FORM} element={<PetForm />} />
+          <Route path={PET_VISITS} element={<VisitsPage />} />
+          <Route path={VETERINARIANS} element={<VeterinariansPage />} />
+          <Route path="*" element={<ErrorPage />} />
+        </Routes>
+      </Layout>
+    </BrowserRouter>
+  </QueryProvider>
 );

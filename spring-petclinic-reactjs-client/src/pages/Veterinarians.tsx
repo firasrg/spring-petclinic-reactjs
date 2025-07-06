@@ -1,10 +1,16 @@
-import { useGetList } from "react-admin";
-import { VETERINARIANS } from "@constants/resources.ts";
-import { IApiVeterinarian } from "@models/api/IApiVeterinarian.ts";
+import { useVeterinarians } from "@hooks/useVeterinarians";
+import { Loading } from "@components/Loading";
+import { ErrorMessage } from "@components/ErrorMessage";
 import { formatPersonFullName } from "../utils";
 
 export default function VeterinariansPage() {
-  const { data: veterinariansList } = useGetList<IApiVeterinarian>(VETERINARIANS);
+  const { data, isLoading, error, refetch } = useVeterinarians();
+
+  if (isLoading) return <Loading />;
+  if (error) return <ErrorMessage error={error.message} onRetry={() => refetch()} />;
+
+  const veterinariansList = data?.data || [];
+
   return (
     <div className="container xd-container">
       <h2 id="veterinarians">Veterinarians</h2>
@@ -18,7 +24,7 @@ export default function VeterinariansPage() {
             </tr>
           </thead>
           <tbody>
-            {veterinariansList?.map(({ id, firstName, lastName, specialties }) => (
+            {veterinariansList.map(({ id, firstName, lastName, specialties }) => (
               <tr key={id}>
                 <td>{formatPersonFullName(firstName, lastName)}</td>
                 <td>{specialties.map(({ name }) => name).join(" ")}</td>

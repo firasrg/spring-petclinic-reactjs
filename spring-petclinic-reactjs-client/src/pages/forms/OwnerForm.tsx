@@ -7,10 +7,10 @@ import { EOwnerForm } from "@models/enums/EOwnerForm";
 import { PHONE_NUMBER } from "@constants/regexp";
 import { REQUIRED_INPUT } from "@constants/messages";
 import { FormError } from "@components/FormError";
-import { Loading, useCreate, useGetOne, useUpdate } from "react-admin";
-import { OWNERS } from "@constants/resources";
+import { Loading } from "@components/Loading";
+import { ErrorMessage } from "@components/ErrorMessage";
 import * as Routes from "@constants/routes";
-import { IApiOwner } from "@models/api/IApiOwner";
+import { useOwner, useCreateOwner, useUpdateOwner } from "@hooks/useOwners";
 import { useEffect } from "react";
 
 const yupSchema = yup
@@ -24,10 +24,6 @@ const yupSchema = yup
   })
   .required();
 
-/**
- * This component represents 2 scenarios: "Add new owner" and "Edit existing owner".
- * @constructor
- */
 export default function OwnerForm() {
   const {
     handleSubmit,
@@ -41,8 +37,11 @@ export default function OwnerForm() {
 
   const { id } = useParams();
   const ownerId = id ? Number(id) : undefined;
+  const isEdit = !!ownerId;
 
-  const { data: ownerData } = useGetOne<IApiOwner>(OWNERS, { id: ownerId });
+  const { data: ownerData, isLoading: ownerLoading, error: ownerError } = useOwner(ownerId);
+  const createOwner = useCreateOwner();
+  const updateOwner = useUpdateOwner();
 
   useEffect(() => {
     if (ownerData) {
@@ -55,36 +54,40 @@ export default function OwnerForm() {
         [EOwnerForm.TELEPHONE]: telephone
       });
     }
-  }, [ownerData]);
-
-  const [create, { isSuccess: addSuccess, isPending: addPending }] = useCreate<IApiOwner>();
-  const [edit, { isSuccess: editSuccess, isPending: editPending }] = useUpdate();
-
-  const isEdit = !!ownerId;
+  }, [ownerData, reset]);
 
   const onSubmit: SubmitHandler<OwnerFormSchema> = async (data, e) => {
     e?.preventDefault();
-    if (!isEdit) {
-      await create(OWNERS, { data });
-      return;
-    }
 
-    await edit(OWNERS, { id: ownerId, data });
+    if (!isEdit) {
+      await createOwner.mutateAsync(data);
+    } else {
+      await updateOwner.mutateAsync({ id: ownerId, data });
+    }
   };
 
-  if (addPending || editPending) {
+  if (ownerLoading || createOwner.isPending || updateOwner.isPending) {
     return <Loading />;
   }
 
-  if (addSuccess) {
+  if (ownerError) {
+    return <ErrorMessage error={ownerError.message} />;
+  }
+
+  if (createOwner.isSuccess) {
     return <Navigate to={Routes.OWNERS_FIND} />;
-  } else if (editSuccess) {
+  } else if (updateOwner.isSuccess) {
     return <Navigate to={`${Routes.OWNERS}/${ownerId}`} />;
   }
 
   return (
     <div className="container xd-container">
       <h2>{isEdit ? "Edit" : "New"} Owner</h2>
+
+      {(createOwner.error || updateOwner.error) && (
+        <ErrorMessage error={createOwner.error?.message || updateOwner.error?.message || "An error occurred"} />
+      )}
+
       <form id="add-owner-form" className="form-horizontal" onSubmit={handleSubmit(onSubmit)}>
         <div className="form-group has-feedback">
           <div className="form-group ">
@@ -97,7 +100,6 @@ export default function OwnerForm() {
 
           <div className="form-group ">
             <label className="col-sm-2 control-label">Last Name</label>
-
             <div className="col-sm-10">
               <input id="lastName" className="form-control" type="text" {...register(EOwnerForm.LAST_NAME)} />
               {errors?.[EOwnerForm.LAST_NAME] && <FormError message={errors?.[EOwnerForm.LAST_NAME]?.message} />}
@@ -106,7 +108,6 @@ export default function OwnerForm() {
 
           <div className="form-group ">
             <label className="col-sm-2 control-label">Address</label>
-
             <div className="col-sm-10">
               <input id="address" className="form-control" type="text" {...register(EOwnerForm.ADDRESS)} />
               {errors?.[EOwnerForm.ADDRESS] && <FormError message={errors?.[EOwnerForm.ADDRESS]?.message} />}
@@ -115,7 +116,6 @@ export default function OwnerForm() {
 
           <div className="form-group ">
             <label className="col-sm-2 control-label">City</label>
-
             <div className="col-sm-10">
               <input id="city" className="form-control" type="text" {...register(EOwnerForm.CITY)} />
               {errors?.[EOwnerForm.CITY] && <FormError message={errors?.[EOwnerForm.CITY]?.message} />}
@@ -124,7 +124,6 @@ export default function OwnerForm() {
 
           <div className="form-group ">
             <label className="col-sm-2 control-label">Telephone</label>
-
             <div className="col-sm-10">
               <input id="telephone" className="form-control" type="text" {...register(EOwnerForm.TELEPHONE)} />
               {errors?.[EOwnerForm.TELEPHONE] && <FormError message={errors?.[EOwnerForm.TELEPHONE]?.message} />}
@@ -133,7 +132,7 @@ export default function OwnerForm() {
         </div>
         <div className="form-group">
           <div className="col-sm-offset-2 col-sm-10">
-            <button className="btn btn-primary" type="submit">
+            <button className="btn btn-primary" type="submit" disabled={createOwner.isPending || updateOwner.isPending}>
               {isEdit ? "Update" : "Add"} Owner
             </button>
           </div>

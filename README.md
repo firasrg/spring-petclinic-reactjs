@@ -18,7 +18,7 @@ The **Spring PetClinic Reactjs Client** is built with a modern stack to ensure s
 
 ### React Framework
 
-[React Admin](https://marmelab.com/react-admin/) was chosen as the primary framework for managing much stuff together, easily, like the UI, the REST API operations, routing, etc. It provides a ready-to-use solution for building data-driven applications, especially for admin dashboards. Its components and features fit perfectly with the structure of the PetClinic project, offering powerful tools to handle CRUD operations, authentication, data visualization, and more. The ability to easily extend and customize React Admin ensures that we can adapt it to the specific needs of any application!
+The UI is built with React, providing a component-based architecture for building interactive user interfaces. React's flexibility and ecosystem make it suitable for scalable and maintainable applications.
 
 ### Build Tool
 
